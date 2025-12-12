@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OBEDTECH TRACKER DEVICE</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007bff'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2366b3ff'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E" type="image/svg+xml">
     
     <!-- Google Fonts for a modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <style>
-        /* --- General Resets & Variables (Light Theme) --- */
+        /* --- General Resets & Variables --- */
         :root {
-            --bg-color-dark: #f8f8f8; /* Very light background for page */
-            --bg-color-medium: #ffffff; /* White background for containers */
-            --bg-color-light: #f0f0f0; /* Slightly off-white for list items */
-            --text-color-primary: #333333; /* Dark text */
-            --text-color-secondary: #666666; /* Slightly lighter dark text */
-            --accent-color-blue: #007bff; /* Standard blue */
-            --accent-color-red: #dc3545; /* Standard red */
-            --border-color: #e0e0e0; /* Light border */
-            --shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow */
+            --bg-color-dark: #1a1a2e;
+            --bg-color-medium: #1f283d;
+            --bg-color-light: #2c3e50;
+            --text-color-primary: #e0e0e0;
+            --text-color-secondary: #a0a0a0;
+            --accent-color-blue: #66b3ff;
+            --accent-color-red: #ff6b6b;
+            --border-color: #3a475a;
+            --shadow-color: rgba(0, 0, 0, 0.2);
             --transition-speed: 0.2s ease-in-out;
         }
 
@@ -38,7 +38,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-y: auto; /* Allow body scrolling */
+            overflow: hidden; /* Prevent body scroll, main handles it */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -57,7 +57,7 @@
         }
 
         button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #559ee5; /* A slightly darker blue */
             transform: translateY(-1px);
         }
 
@@ -71,7 +71,7 @@
             color: var(--accent-color-blue);
         }
         button.outline:hover {
-            background-color: rgba(0, 123, 255, 0.1); /* Light blue tint on hover */
+            background-color: rgba(102, 179, 255, 0.1);
             color: var(--accent-color-blue);
         }
 
@@ -79,7 +79,7 @@
             background-color: var(--accent-color-red);
         }
         button.danger:hover {
-            background-color: #c82333;
+            background-color: #e55a5a;
         }
         button.danger.outline {
             background-color: transparent;
@@ -87,19 +87,19 @@
             color: var(--accent-color-red);
         }
         button.danger.outline:hover {
-            background-color: rgba(220, 53, 69, 0.1);
+            background-color: rgba(255, 107, 107, 0.1);
             color: var(--accent-color-red);
         }
 
         /* --- Header --- */
         header {
-            background-color: var(--bg-color-medium);
+            background-color: var(--bg-color-light);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px var(--shadow-color);
-            z-index: 10;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            z-index: 10; /* Above map */
         }
 
         header h1 {
@@ -127,26 +127,25 @@
             color: var(--text-color-secondary);
         }
 
-        /* --- Main Content Area (for device list) --- */
+        /* --- Main Layout --- */
         main {
-            flex: 1; /* Occupy remaining vertical space */
-            padding: 20px;
             display: flex;
-            justify-content: center; /* Center the device container horizontally */
-            align-items: flex-start; /* Align content to the top */
+            flex: 1; /* Occupy remaining vertical space */
+            overflow: hidden; /* Sidebar and map will handle their own scrolling */
         }
 
-        .device-container {
-            width: 100%;
-            max-width: 800px; /* Max width for readability */
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 320px;
             background-color: var(--bg-color-medium);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px var(--shadow-color);
-            position: relative; /* For loading overlay */
+            padding: 25px 20px;
+            box-shadow: 4px 0 10px var(--shadow-color);
+            overflow-y: auto; /* Allow scrolling for device list */
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0; /* Don't allow it to shrink */
         }
 
-        .device-container h2 {
+        .sidebar h2 {
             margin-top: 0;
             color: var(--text-color-primary);
             font-size: 22px;
@@ -174,14 +173,14 @@
         }
 
         .device-list li:hover {
-            background-color: #e5e5e5; /* Slightly darker on hover */
+            background-color: #374a60; /* Slightly lighter on hover */
             border-color: var(--accent-color-blue);
         }
 
         .device-list li.active {
-            background-color: #e0f2ff; /* Light blue tint for active */
+            background-color: #3a475a; /* Slightly different active background */
             border-color: var(--accent-color-blue);
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            box-shadow: 0 0 12px rgba(102, 179, 255, 0.3);
             transform: translateY(-2px); /* Subtle lift */
         }
 
@@ -231,27 +230,43 @@
             color: #333;
         }
 
-        /* --- Loading Overlay for Device List --- */
-        #deviceListLoading {
+        /* --- Map Container --- */
+        .map-container {
+            flex: 1; /* Occupy remaining horizontal space */
+            background-color: var(--bg-color-dark);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #2a3a4c; /* Placeholder until map loads */
+        }
+
+        /* --- Loading Overlay --- */
+        .loading-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8); /* Light overlay */
+            background-color: rgba(26, 26, 46, 0.7); /* Semi-transparent dark overlay */
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 20;
-            border-radius: 12px; /* Match container */
+            z-index: 20; /* Above map and content */
             color: var(--accent-color-blue);
             font-size: 18px;
             font-weight: 500;
+            flex-direction: column;
+            gap: 15px;
         }
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1); /* Lighter spinner track */
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid var(--accent-color-blue);
             border-radius: 50%;
             width: 40px;
@@ -265,12 +280,12 @@
 
         /* --- Footer --- */
         footer {
-            background-color: var(--bg-color-medium);
+            background-color: var(--bg-color-light);
             color: var(--text-color-secondary);
             padding: 15px 30px;
             text-align: center;
             font-size: 13px;
-            box-shadow: 0 -2px 4px var(--shadow-color);
+            box-shadow: 0 -4px 8px var(--shadow-color);
             z-index: 10;
         }
 
@@ -326,7 +341,7 @@
         .form-group input:focus {
             outline: none;
             border-color: var(--accent-color-blue);
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(102, 179, 255, 0.3);
         }
 
         .login-error {
@@ -345,11 +360,27 @@
         /* --- Responsive Adjustments --- */
         @media (max-width: 900px) {
             main {
-                padding: 10px;
+                flex-direction: column;
             }
-            .device-container {
-                max-width: 100%;
-                margin: 0;
+            .sidebar {
+                width: 100%;
+                max-height: 40vh; /* Limit height on small screens */
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: 0 4px 10px var(--shadow-color);
+                overflow-y: scroll; /* Ensure scrollability */
+            }
+            header {
+                padding: 10px 20px;
+            }
+            header h1 {
+                font-size: 22px;
+            }
+            .user-info span {
+                display: none; /* Hide email on very small screens */
+            }
+            .device-controls button {
+                flex: 1 1 auto; /* Fill available space */
             }
         }
         @media (max-width: 480px) {
@@ -360,7 +391,7 @@
                 width: 25px;
                 height: 25px;
             }
-            .device-container h2 {
+            .sidebar h2 {
                 font-size: 20px;
             }
             .device-list li {
@@ -385,6 +416,10 @@
             }
         }
     </style>
+    
+    <!-- Google Maps API -->
+    <!-- You MUST replace 'YOUR_GOOGLE_MAPS_API_KEY' with your actual API key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
 </head>
 <body>
     <!-- Login Page -->
@@ -416,9 +451,9 @@
     </header>
 
     <main class="hidden">
-        <div class="device-container">
+        <aside class="sidebar">
             <h2>My Devices</h2>
-            <div id="deviceListLoading" class="loading-overlay hidden">
+            <div id="sidebarLoading" class="loading-overlay" style="position: static; background: none; min-height: 100px; display: none;">
                 <div class="spinner"></div>
                 <p>Loading devices...</p>
             </div>
@@ -428,7 +463,15 @@
             <div id="noDevicesMessage" style="text-align: center; color: var(--text-color-secondary); padding: 20px;" class="hidden">
                 No devices registered for this email.
             </div>
-        </div>
+        </aside>
+
+        <section class="map-container">
+            <div id="map"></div>
+            <div id="mapLoading" class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Loading map and location data...</p>
+            </div>
+        </section>
     </main>
 
     <footer class="hidden">
@@ -445,19 +488,44 @@
         ];
 
         let MOCK_DEVICES = [
-            { id: 'device1', userId: 'user1', label: 'Alice\'s Phone (Android)', platform: 'Android', lastUpdated: new Date(Date.now() - 5 * 60 * 1000), sharingEnabled: true, lastLocation: { lat: 34.0522, lng: -118.2437 } }, // LA
-            { id: 'device2', userId: 'user1', label: 'Alice\'s Tablet', platform: 'iOS', lastUpdated: new Date(Date.now() - 30 * 60 * 1000), sharingEnabled: false, lastLocation: { lat: 37.7749, lng: -122.4194 } }, // SF
-            { id: 'device3', userId: 'user1', label: 'Alice\'s Car Tracker', platform: 'IoT', lastUpdated: new Date(Date.now() - 2 * 60 * 60 * 1000), sharingEnabled: true, lastLocation: { lat: 33.7490, lng: -84.3880 } }, // Atlanta
-            { id: 'device4', userId: 'user2', label: 'Bob\'s Work Phone', platform: 'Android', lastUpdated: new Date(Date.now() - 10 * 60 * 1000), sharingEnabled: true, lastLocation: { lat: 40.7128, lng: -74.0060 } }, // NYC
-            { id: 'device5', userId: 'user2', label: 'Bob\'s Drone', platform: 'IoT', lastUpdated: new Date(Date.now() - 45 * 60 * 1000), sharingEnabled: false, lastLocation: { lat: 51.5074, lng: -0.1278 } }, // London
+            { id: 'device1', userId: 'user1', label: 'Alice\'s Phone (Android)', platform: 'Android', lastUpdated: new Date(Date.now() - 5 * 60 * 1000), sharingEnabled: true },
+            { id: 'device2', userId: 'user1', label: 'Alice\'s Tablet', platform: 'iOS', lastUpdated: new Date(Date.now() - 30 * 60 * 1000), sharingEnabled: false },
+            { id: 'device3', userId: 'user1', label: 'Alice\'s Car Tracker', platform: 'IoT', lastUpdated: new Date(Date.now() - 2 * 60 * 60 * 1000), sharingEnabled: true },
+            { id: 'device4', userId: 'user2', label: 'Bob\'s Work Phone', platform: 'Android', lastUpdated: new Date(Date.now() - 10 * 60 * 1000), sharingEnabled: true },
+            { id: 'device5', userId: 'user2', label: 'Bob\'s Drone', platform: 'IoT', lastUpdated: new Date(Date.now() - 45 * 60 * 1000), sharingEnabled: false },
         ];
 
-        // Since the map is removed, detailed location history is less relevant for display.
-        // We can keep `lastLocation` directly in MOCK_DEVICES for "last known position".
-        // The MOCK_LOCATION_SAMPLES structure can be simplified or removed if not needed.
-        // For this version, I'll remove MOCK_LOCATION_SAMPLES as it implies history plotting.
+        let MOCK_LOCATION_SAMPLES = {
+            'device1': [
+                { lat: 34.0522, lng: -118.2437, recordedAt: new Date(Date.now() - 5 * 60 * 1000) }, // LA
+                { lat: 34.0535, lng: -118.2520, recordedAt: new Date(Date.now() - 10 * 60 * 1000) },
+                { lat: 34.0580, lng: -118.2600, recordedAt: new Date(Date.now() - 15 * 60 * 1000) },
+                { lat: 34.0620, lng: -118.2700, recordedAt: new Date(Date.now() - 20 * 60 * 1000) },
+            ],
+            'device2': [
+                { lat: 37.7749, lng: -122.4194, recordedAt: new Date(Date.now() - 30 * 60 * 1000) }, // SF
+                { lat: 37.7780, lng: -122.4250, recordedAt: new Date(Date.now() - 40 * 60 * 1000) },
+            ],
+            'device3': [
+                { lat: 33.7490, lng: -84.3880, recordedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) }, // Atlanta
+                { lat: 33.7550, lng: -84.3950, recordedAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000) },
+                { lat: 33.7600, lng: -84.4000, recordedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+            ],
+            'device4': [
+                { lat: 40.7128, lng: -74.0060, recordedAt: new Date(Date.now() - 10 * 60 * 1000) }, // NYC
+                { lat: 40.7150, lng: -74.0100, recordedAt: new Date(Date.now() - 15 * 60 * 1000) },
+                { lat: 40.7200, lng: -74.0150, recordedAt: new Date(Date.now() - 20 * 60 * 1000) },
+            ],
+            'device5': [
+                { lat: 51.5074, lng: -0.1278, recordedAt: new Date(Date.now() - 45 * 60 * 1000) }, // London
+                { lat: 51.5100, lng: -0.1350, recordedAt: new Date(Date.now() - 55 * 60 * 1000) },
+            ]
+        };
 
         // --- Global Variables ---
+        let map;
+        let markers = {}; // Store Google Maps markers by deviceId
+        let polylines = {}; // Store Google Maps polylines by deviceId
         let activeDeviceId = null;
         let currentUser = null; // Will be set after successful login
 
@@ -475,15 +543,16 @@
         const logoutButton = document.getElementById('logoutButton');
         const deviceListUl = document.getElementById('deviceList');
         const noDevicesMessage = document.getElementById('noDevicesMessage');
-        const deviceListLoading = document.getElementById('deviceListLoading');
+        const sidebarLoading = document.getElementById('sidebarLoading');
+        const mapLoading = document.getElementById('mapLoading');
 
         // --- Helper Functions ---
 
-        function showLoading(element) { element.classList.remove('hidden'); }
-        function hideLoading(element) { element.classList.add('hidden'); }
+        function showLoading(element) { element.style.display = 'flex'; }
+        function hideLoading(element) { element.style.display = 'none'; }
 
         function formatRelativeTime(date) {
-            if (!(date instanceof Date) || isNaN(date.getTime())) return 'Never';
+            if (!(date instanceof Date) || isNaN(date.getTime())) return 'Never'; // Use getTime() for reliable NaN check
             const now = new Date();
             const seconds = Math.round((now - date) / 1000);
             const minutes = Math.round(seconds / 60);
@@ -494,7 +563,18 @@
             if (minutes < 60) return `${minutes} mins ago`;
             if (hours < 24) return `${hours} hours ago`;
             if (days < 7) return `${days} days ago`;
-            return date.toLocaleDateString();
+            return date.toLocaleDateString(); // Fallback for older dates
+        }
+
+        function createLocationIcon(color, isLatest = false) {
+            return {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: color,
+                fillOpacity: 0.9,
+                strokeColor: 'white',
+                strokeWeight: isLatest ? 3 : 2, // Latest point is slightly thicker border
+                scale: isLatest ? 9 : 8,
+            };
         }
 
         // --- UI View Management ---
@@ -503,10 +583,10 @@
             header.classList.add('hidden');
             main.classList.add('hidden');
             footer.classList.add('hidden');
+            clearMap(); // Clear map content when logging out
             activeDeviceId = null;
             deviceListUl.innerHTML = '';
-            hideLoading(deviceListLoading);
-            noDevicesMessage.classList.add('hidden');
+            noDevicesMessage.classList.add('hidden'); // Hide no devices message
         }
 
         function showDashboard() {
@@ -514,19 +594,139 @@
             header.classList.remove('hidden');
             main.classList.remove('hidden');
             footer.classList.remove('hidden');
+            // Crucial for Google Maps to render correctly after being hidden
+            if (map) {
+                google.maps.event.trigger(map, 'resize');
+            }
+        }
+
+        // --- Google Maps Initialization ---
+        function initMap() {
+            hideLoading(mapLoading); // Hide initial map loading spinner once API is ready
+            console.log("Google Maps API loaded.");
+            const defaultLocation = { lat: 0, lng: 0 }; // Default to global view
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultLocation,
+                zoom: 2, // Start zoomed out
+                mapId: 'YOUR_MAP_ID', // Optional: Use a custom map style from Google Cloud Console
+                // Dark mode map style (as in previous response)
+                styles: [
+                    { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                    { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                    {
+                        featureType: "administrative.locality",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#d59563" }],
+                    },
+                    {
+                        featureType: "poi",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#d59563" }],
+                    },
+                    {
+                        featureType: "poi.park",
+                        elementType: "geometry",
+                        stylers: [{ color: "#263c3f" }],
+                    },
+                    {
+                        featureType: "poi.park",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#6b9a76" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry",
+                        stylers: [{ color: "#38414e" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry.stroke",
+                        stylers: [{ color: "#212a37" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#9ca5b3" }],
+                    },
+                    {
+                        featureType: "road.highway",
+                        elementType: "geometry",
+                        stylers: [{ color: "#746855" }],
+                    },
+                    {
+                        featureType: "road.highway",
+                        elementType: "geometry.stroke",
+                        stylers: [{ color: "#1f2835" }],
+                    },
+                    {
+                        featureType: "road.highway",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#f3d19c" }],
+                    },
+                    {
+                        featureType: "transit",
+                        elementType: "geometry",
+                        stylers: [{ color: "#2f3948" }],
+                    },
+                    {
+                        featureType: "transit.station",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#d59563" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "geometry",
+                        stylers: [{ color: "#17263c" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#515c6d" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "labels.text.stroke",
+                        stylers: [{ color: "#17263c" }],
+                    },
+                ]
+            });
+
+            // If a user was already logged in when the map loaded, finish setup
+            if (currentUser && document.body.classList.contains('dashboard-active')) {
+                 setupDashboard();
+            }
         }
 
         // --- API Simulation Functions ---
+        // In a real application, these would be actual `fetch` calls to your backend
+
         async function fetchDevices(userId) {
-            showLoading(deviceListLoading);
-            noDevicesMessage.classList.add('hidden');
+            showLoading(sidebarLoading);
+            noDevicesMessage.classList.add('hidden'); // Hide message while loading
             console.log(`[MOCK API] Fetching devices for user: ${userId}`);
             return new Promise(resolve => {
                 setTimeout(() => {
-                    hideLoading(deviceListLoading);
+                    hideLoading(sidebarLoading);
                     const userDevices = MOCK_DEVICES.filter(d => d.userId === userId);
                     resolve(userDevices);
                 }, 800); // Simulate network delay
+            });
+        }
+
+        async function fetchLocationHistory(deviceId) {
+            showLoading(mapLoading);
+            console.log(`[MOCK API] Fetching location history for device: ${deviceId}`);
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    hideLoading(mapLoading);
+                    const locations = (MOCK_LOCATION_SAMPLES[deviceId] || []).map(loc => ({
+                        ...loc,
+                        recordedAt: new Date(loc.recordedAt) // Ensure date objects
+                    }));
+                    resolve(locations.sort((a, b) => a.recordedAt - b.recordedAt)); // Sort chronologically
+                }, 1200); // Simulate network delay
             });
         }
 
@@ -551,7 +751,7 @@
             return new Promise(resolve => {
                 setTimeout(() => {
                     MOCK_DEVICES = MOCK_DEVICES.filter(d => d.id !== deviceId);
-                    // No location samples to remove since map is gone
+                    delete MOCK_LOCATION_SAMPLES[deviceId]; // Also remove its locations
                     resolve({ success: true });
                 }, 700);
             });
@@ -581,7 +781,6 @@
                     <div class="device-status-badge ${sharingStatusClass}">${sharingStatusText}</div>
                     <div class="device-name">${device.label}</div>
                     <div class="last-update">Last update: ${formatRelativeTime(new Date(device.lastUpdated))}</div>
-                    <div class="last-location">Last known location: ${device.lastLocation ? `${device.lastLocation.lat.toFixed(4)}, ${device.lastLocation.lng.toFixed(4)}` : 'N/A'}</div>
                     <div class="device-controls">
                         <button class="toggle-sharing-btn ${device.sharingEnabled ? 'outline' : ''}" data-device-id="${device.id}" data-current-status="${device.sharingEnabled}">
                             ${device.sharingEnabled ? 'Pause Sharing' : 'Enable Sharing'}
@@ -593,20 +792,89 @@
             });
         }
 
-        // With no map, selecting a device just updates its active state and could theoretically show more details
+        function clearMap() {
+            // Clear existing markers
+            Object.values(markers).forEach(marker => marker.setMap(null));
+            markers = {};
+            // Clear existing polylines
+            Object.values(polylines).forEach(polyline => polyline.setMap(null));
+            polylines = {};
+        }
+
+        function plotDeviceLocations(deviceId, locations) {
+            clearMap();
+
+            if (!map) {
+                console.error("Map not initialized.");
+                return;
+            }
+
+            if (!locations || locations.length === 0) {
+                console.warn(`No map or locations to plot for device ${deviceId}.`);
+                map.setCenter({ lat: 0, lng: 0 }); // Center map to a global view if no locations
+                map.setZoom(2);
+                return;
+            }
+
+            const path = [];
+            let bounds = new google.maps.LatLngBounds();
+
+            locations.forEach((loc, index) => {
+                const position = { lat: loc.lat, lng: loc.lng };
+                path.push(position);
+                bounds.extend(position);
+
+                // Add marker for the latest location
+                if (index === locations.length - 1) {
+                    const device = MOCK_DEVICES.find(d => d.id === deviceId);
+                    const markerColor = device?.sharingEnabled ? '#28a745' : '#ffc107'; // Green for enabled, orange for paused
+                    markers[deviceId] = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        title: `${device?.label || 'Device'} (Last Known: ${formatRelativeTime(new Date(loc.recordedAt))})`,
+                        icon: createLocationIcon(markerColor, true), // Latest point uses 'isLatest' icon
+                        animation: google.maps.Animation.DROP,
+                    });
+                }
+            });
+
+            // Draw polyline for historical path
+            if (path.length > 1) {
+                // Get the computed value of the CSS variable for strokeColor
+                const accentColorBlue = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-blue');
+                polylines[deviceId] = new google.maps.Polyline({
+                    path: path,
+                    geodesic: true,
+                    strokeColor: accentColorBlue,
+                    strokeOpacity: 0.8,
+                    strokeWeight: 4,
+                    map: map,
+                });
+            }
+
+            // Fit map to show all locations
+            if (!bounds.isEmpty()) {
+                map.fitBounds(bounds);
+            } else if (locations.length > 0) {
+                map.setCenter(path[0]);
+                map.setZoom(15);
+            }
+        }
+
         async function selectDevice(deviceId) {
             activeDeviceId = deviceId;
 
+            // Update active state in sidebar
             document.querySelectorAll('.device-list li').forEach(item => {
                 if (item.dataset.deviceId === deviceId) {
                     item.classList.add('active');
-                    // You could add logic here to display more detailed device info if needed
                 } else {
                     item.classList.remove('active');
                 }
             });
-            console.log(`Device selected: ${deviceId}. No map to plot.`);
-            // No map plotting logic needed here
+
+            const locations = await fetchLocationHistory(deviceId);
+            plotDeviceLocations(deviceId, locations);
         }
 
         // --- Event Handlers ---
@@ -626,7 +894,15 @@
                 loginError.textContent = ''; // Clear any previous error
                 
                 showDashboard();
-                setupDashboard();
+                // Ensure map is loaded before calling setupDashboard
+                if (typeof google !== 'undefined' && google.maps && map) {
+                    setupDashboard();
+                } else {
+                    // Set a flag, setupDashboard will be called by initMap callback
+                    document.body.classList.add('dashboard-active');
+                    showLoading(mapLoading); // Keep map loading visible until initMap runs
+                }
+
             } else {
                 loginError.textContent = 'Email not recognized. Please try alice@example.com or bob@example.com';
             }
@@ -645,6 +921,11 @@
                     // Re-render device list to reflect new status
                     const updatedDevices = await fetchDevices(currentUser.id);
                     renderDeviceList(updatedDevices);
+                    // If this was the active device, update its marker color
+                    if (activeDeviceId === deviceId) {
+                        const locations = MOCK_LOCATION_SAMPLES[deviceId] || [];
+                        plotDeviceLocations(deviceId, locations); // Re-plot with updated status
+                    }
                 } else {
                     alert(`Failed to update sharing: ${result.message}`);
                 }
@@ -657,7 +938,8 @@
                         const updatedDevices = await fetchDevices(currentUser.id);
                         renderDeviceList(updatedDevices);
                         if (activeDeviceId === deviceId) {
-                            activeDeviceId = null; // Clear active device if it was revoked
+                            clearMap(); // Clear map if active device was revoked
+                            activeDeviceId = null;
                         }
                     } else {
                         alert('Failed to revoke device.');
@@ -672,7 +954,9 @@
             localStorage.removeItem('loggedInUserId');
             localStorage.removeItem('loggedInUserEmail');
             currentUser = null;
+            document.body.classList.remove('dashboard-active'); // Remove flag
             showLogin();
+            clearMap();
             deviceListUl.innerHTML = ''; // Clear device list
             noDevicesMessage.classList.add('hidden'); // Hide no devices message
             activeDeviceId = null; // Clear active device
@@ -698,6 +982,10 @@
             // Automatically select the first device if available
             if (devices.length > 0) {
                 await selectDevice(devices[0].id);
+            } else {
+                hideLoading(mapLoading); // No devices, no map data to load
+                map.setCenter({ lat: 0, lng: 0 });
+                map.setZoom(2);
             }
         }
 
@@ -719,7 +1007,14 @@
                 currentUser = MOCK_USERS.find(u => u.id === storedUserId && u.email === storedUserEmail);
                 if (currentUser) {
                     showDashboard();
-                    setupDashboard();
+                    // Set a flag that dashboard should be active for initMap callback
+                    document.body.classList.add('dashboard-active');
+                    // Show loading overlay for map until initMap is called by Google Maps API
+                    showLoading(mapLoading);
+                    // If initMap has already run (e.g., from browser cache), call setupDashboard directly
+                    if (typeof google !== 'undefined' && google.maps && map) {
+                        setupDashboard();
+                    }
                     return; // Stop here, dashboard is being set up
                 }
             }
