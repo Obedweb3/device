@@ -289,6 +289,74 @@
             z-index: 10;
         }
 
+        /* --- Login Page Styles --- */
+        #login-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: var(--bg-color-dark);
+        }
+
+        .login-box {
+            background-color: var(--bg-color-medium);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 30px;
+            color: var(--accent-color-blue);
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: var(--text-color-primary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-primary);
+            font-size: 16px;
+            transition: border-color var(--transition-speed);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color-blue);
+            box-shadow: 0 0 0 2px rgba(102, 179, 255, 0.3);
+        }
+
+        .login-error {
+            color: var(--accent-color-red);
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            min-height: 20px; /* Reserve space */
+        }
+        
+        /* --- Utility Classes --- */
+        .hidden {
+            display: none !important;
+        }
+
         /* --- Responsive Adjustments --- */
         @media (max-width: 900px) {
             main {
@@ -339,6 +407,13 @@
                 padding: 8px 12px;
                 font-size: 13px;
             }
+            .login-box {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            .login-box h2 {
+                font-size: 24px;
+            }
         }
     </style>
     
@@ -347,7 +422,24 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
 </head>
 <body>
-    <header>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="login-box">
+            <h2>Location Dashboard Login</h2>
+            <div class="form-group">
+                <label for="emailInput">Email Address</label>
+                <input type="email" id="emailInput" placeholder="Enter your email" autocomplete="email" required>
+            </div>
+            <div id="loginError" class="login-error"></div>
+            <button id="loginButton">Login</button>
+            <p style="margin-top: 20px; font-size: 13px; color: var(--text-color-secondary);">
+                Hint: Use <strong>alice@example.com</strong> or <strong>bob@example.com</strong> to test.
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Content (initially hidden) -->
+    <header class="hidden">
         <h1>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
             Location Dashboard
@@ -358,7 +450,7 @@
         </div>
     </header>
 
-    <main>
+    <main class="hidden">
         <aside class="sidebar">
             <h2>My Devices</h2>
             <div id="sidebarLoading" class="loading-overlay" style="position: static; background: none; min-height: 100px; display: none;">
@@ -368,6 +460,9 @@
             <ul id="deviceList" class="device-list">
                 <!-- Device items will be populated here by JavaScript -->
             </ul>
+            <div id="noDevicesMessage" style="text-align: center; color: var(--text-color-secondary); padding: 20px;" class="hidden">
+                No devices registered for this email.
+            </div>
         </aside>
 
         <section class="map-container">
@@ -379,7 +474,7 @@
         </section>
     </main>
 
-    <footer>
+    <footer class="hidden">
         <p>&copy; 2023 Location Tracker. All rights reserved. <a href="#" style="color: var(--accent-color-blue); text-decoration: none;">Privacy Policy</a></p>
     </footer>
 
@@ -395,6 +490,8 @@
             { id: 'device1', userId: 'user1', label: 'Alice\'s Phone (Android)', platform: 'Android', lastUpdated: new Date(Date.now() - 5 * 60 * 1000), sharingEnabled: true },
             { id: 'device2', userId: 'user1', label: 'Alice\'s Tablet', platform: 'iOS', lastUpdated: new Date(Date.now() - 30 * 60 * 1000), sharingEnabled: false },
             { id: 'device3', userId: 'user1', label: 'Alice\'s Car Tracker', platform: 'IoT', lastUpdated: new Date(Date.now() - 2 * 60 * 60 * 1000), sharingEnabled: true },
+            { id: 'device4', userId: 'user2', label: 'Bob\'s Work Phone', platform: 'Android', lastUpdated: new Date(Date.now() - 10 * 60 * 1000), sharingEnabled: true },
+            { id: 'device5', userId: 'user2', label: 'Bob\'s Drone', platform: 'IoT', lastUpdated: new Date(Date.now() - 45 * 60 * 1000), sharingEnabled: false },
         ];
 
         let MOCK_LOCATION_SAMPLES = {
@@ -412,6 +509,15 @@
                 { lat: 33.7490, lng: -84.3880, recordedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) }, // Atlanta
                 { lat: 33.7550, lng: -84.3950, recordedAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000) },
                 { lat: 33.7600, lng: -84.4000, recordedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+            ],
+            'device4': [
+                { lat: 40.7128, lng: -74.0060, recordedAt: new Date(Date.now() - 10 * 60 * 1000) }, // NYC
+                { lat: 40.7150, lng: -74.0100, recordedAt: new Date(Date.now() - 15 * 60 * 1000) },
+                { lat: 40.7200, lng: -74.0150, recordedAt: new Date(Date.now() - 20 * 60 * 1000) },
+            ],
+            'device5': [
+                { lat: 51.5074, lng: -0.1278, recordedAt: new Date(Date.now() - 45 * 60 * 1000) }, // London
+                { lat: 51.5100, lng: -0.1350, recordedAt: new Date(Date.now() - 55 * 60 * 1000) },
             ]
         };
 
@@ -420,12 +526,22 @@
         let markers = {}; // Store Google Maps markers by deviceId
         let polylines = {}; // Store Google Maps polylines by deviceId
         let activeDeviceId = null;
-        const currentUser = MOCK_USERS[0]; // Simulate a logged-in user
+        let currentUser = null; // Will be set after successful login
 
         // --- DOM Elements ---
+        const loginPage = document.getElementById('login-page');
+        const emailInput = document.getElementById('emailInput');
+        const loginButton = document.getElementById('loginButton');
+        const loginError = document.getElementById('loginError');
+
+        const header = document.querySelector('header');
+        const main = document.querySelector('main');
+        const footer = document.querySelector('footer');
+
         const loggedInUserEmailSpan = document.getElementById('loggedInUserEmail');
         const logoutButton = document.getElementById('logoutButton');
         const deviceListUl = document.getElementById('deviceList');
+        const noDevicesMessage = document.getElementById('noDevicesMessage');
         const sidebarLoading = document.getElementById('sidebarLoading');
         const mapLoading = document.getElementById('mapLoading');
 
@@ -435,6 +551,7 @@
         function hideLoading(element) { element.style.display = 'none'; }
 
         function formatRelativeTime(date) {
+            if (!(date instanceof Date) || isNaN(date)) return 'Never';
             const now = new Date();
             const seconds = Math.round((now - date) / 1000);
             const minutes = Math.round(seconds / 60);
@@ -448,28 +565,50 @@
             return date.toLocaleDateString(); // Fallback for older dates
         }
 
-        function createLocationIcon(color) {
+        function createLocationIcon(color, isLatest = false) {
             return {
                 path: google.maps.SymbolPath.CIRCLE,
                 fillColor: color,
                 fillOpacity: 0.9,
                 strokeColor: 'white',
-                strokeWeight: 2,
-                scale: 8,
+                strokeWeight: isLatest ? 3 : 2, // Latest point is slightly thicker border
+                scale: isLatest ? 9 : 8,
             };
+        }
+
+        // --- UI View Management ---
+        function showLogin() {
+            loginPage.classList.remove('hidden');
+            header.classList.add('hidden');
+            main.classList.add('hidden');
+            footer.classList.add('hidden');
+            clearMap(); // Clear map content when logging out
+            activeDeviceId = null;
+            deviceListUl.innerHTML = '';
+        }
+
+        function showDashboard() {
+            loginPage.classList.add('hidden');
+            header.classList.remove('hidden');
+            main.classList.remove('hidden');
+            footer.classList.remove('hidden');
+            // Crucial for Google Maps to render correctly after being hidden
+            if (map) {
+                google.maps.event.trigger(map, 'resize');
+            }
         }
 
         // --- Google Maps Initialization ---
         function initMap() {
             hideLoading(mapLoading); // Hide initial map loading spinner once API is ready
             console.log("Google Maps API loaded.");
-            const defaultLocation = { lat: 34.0522, lng: -118.2437 }; // Default to Los Angeles
+            const defaultLocation = { lat: 0, lng: 0 }; // Default to global view
 
             map = new google.maps.Map(document.getElementById("map"), {
                 center: defaultLocation,
-                zoom: 10,
+                zoom: 2, // Start zoomed out
                 mapId: 'YOUR_MAP_ID', // Optional: Use a custom map style from Google Cloud Console
-                // Dark mode map style - you can generate more complex styles at snazzymaps.com or Google Cloud Console
+                // Dark mode map style (as in previous response)
                 styles: [
                     { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
                     { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -552,14 +691,15 @@
                 ]
             });
 
-            // Initial dashboard setup after map is ready
-            setupDashboard();
+            // Initial dashboard setup (will run on DOMContentLoaded, then call this)
+            // Or more correctly: `setupDashboard()` will be called after login/page load check.
         }
 
         // --- API Simulation Functions ---
 
         async function fetchDevices(userId) {
             showLoading(sidebarLoading);
+            noDevicesMessage.classList.add('hidden'); // Hide message while loading
             console.log(`[MOCK API] Fetching devices for user: ${userId}`);
             return new Promise(resolve => {
                 setTimeout(() => {
@@ -614,9 +754,10 @@
         function renderDeviceList(devices) {
             deviceListUl.innerHTML = ''; // Clear existing list
             if (!devices || devices.length === 0) {
-                deviceListUl.innerHTML = `<li style="text-align: center; color: var(--text-color-secondary); padding: 20px;">No devices found.</li>`;
+                noDevicesMessage.classList.remove('hidden');
                 return;
             }
+            noDevicesMessage.classList.add('hidden');
 
             devices.forEach(device => {
                 const li = document.createElement('li');
@@ -657,6 +798,8 @@
 
             if (!map || !locations || locations.length === 0) {
                 console.warn(`No map or locations to plot for device ${deviceId}.`);
+                map.setCenter({ lat: 0, lng: 0 }); // Center map to a global view if no locations
+                map.setZoom(2);
                 return;
             }
 
@@ -670,11 +813,13 @@
 
                 // Add marker for the latest location
                 if (index === locations.length - 1) {
+                    const device = MOCK_DEVICES.find(d => d.id === deviceId);
+                    const markerColor = device?.sharingEnabled ? '#28a745' : '#ffc107'; // Green for enabled, orange for paused
                     markers[deviceId] = new google.maps.Marker({
                         position: position,
                         map: map,
-                        title: `${MOCK_DEVICES.find(d => d.id === deviceId)?.label || 'Device'} (Last Known)`,
-                        icon: createLocationIcon(MOCK_DEVICES.find(d => d.id === deviceId)?.sharingEnabled ? '#28a745' : '#ffc107'), // Green for enabled, orange for paused
+                        title: `${device?.label || 'Device'} (Last Known: ${formatRelativeTime(new Date(loc.recordedAt))})`,
+                        icon: createLocationIcon(markerColor, true), // Latest point uses 'isLatest' icon
                         animation: google.maps.Animation.DROP,
                     });
                 }
@@ -685,7 +830,7 @@
                 polylines[deviceId] = new google.maps.Polyline({
                     path: path,
                     geodesic: true,
-                    strokeColor: var_accent_color_blue, /* Use CSS variable for consistency */
+                    strokeColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color-blue'), /* Use CSS variable for consistency */
                     strokeOpacity: 0.8,
                     strokeWeight: 4,
                     map: map,
@@ -719,6 +864,26 @@
 
         // --- Event Handlers ---
 
+        async function handleLogin() {
+            const email = emailInput.value.trim().toLowerCase();
+            if (!email) {
+                loginError.textContent = 'Please enter an email address.';
+                return;
+            }
+
+            const user = MOCK_USERS.find(u => u.email === email);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('loggedInUserId', user.id); // Simulate session
+                localStorage.setItem('loggedInUserEmail', user.email); // Store email for display
+                loginError.textContent = ''; // Clear any previous error
+                showDashboard();
+                setupDashboard(); // Load devices for the logged-in user
+            } else {
+                loginError.textContent = 'Email not recognized. Please try alice@example.com or bob@example.com';
+            }
+        }
+
         async function handleDeviceListClick(event) {
             const listItem = event.target.closest('li[data-device-id]');
             if (!listItem) return;
@@ -734,7 +899,8 @@
                     renderDeviceList(updatedDevices);
                     // If this was the active device, update its marker color
                     if (activeDeviceId === deviceId) {
-                        plotDeviceLocations(deviceId, MOCK_LOCATION_SAMPLES[deviceId] || []);
+                        const locations = MOCK_LOCATION_SAMPLES[deviceId] || [];
+                        plotDeviceLocations(deviceId, locations); // Re-plot with updated status
                     }
                 } else {
                     alert(`Failed to update sharing: ${result.message}`);
@@ -761,20 +927,26 @@
         }
 
         function handleLogout() {
-            // In a real app:
-            // 1. Call your backend logout API to invalidate tokens.
-            // 2. Clear local storage (JWT, user info).
-            // 3. Redirect to login page.
-            alert('Logging out...');
-            localStorage.removeItem('jwt'); // Example JWT clearing
-            localStorage.removeItem('userEmail');
-            // For this demo, we'll just reload to simulate a fresh start
-            location.reload();
+            localStorage.removeItem('loggedInUserId');
+            localStorage.removeItem('loggedInUserEmail');
+            currentUser = null;
+            showLogin();
+            clearMap();
+            deviceListUl.innerHTML = ''; // Clear device list
+            noDevicesMessage.classList.add('hidden'); // Hide no devices message
+            activeDeviceId = null; // Clear active device
+            emailInput.value = ''; // Clear email input
+            loginError.textContent = ''; // Clear login error
         }
 
-
-        // --- Initial Dashboard Setup ---
+        // --- Initial Dashboard Setup for a logged-in user ---
         async function setupDashboard() {
+            if (!currentUser) {
+                console.error("No current user set for dashboard setup.");
+                showLogin();
+                return;
+            }
+
             loggedInUserEmailSpan.textContent = currentUser.email;
             logoutButton.addEventListener('click', handleLogout);
             deviceListUl.addEventListener('click', handleDeviceListClick);
@@ -787,14 +959,41 @@
                 await selectDevice(devices[0].id);
             } else {
                 hideLoading(mapLoading); // No devices, no map data to load
+                map.setCenter({ lat: 0, lng: 0 });
+                map.setZoom(2);
             }
         }
 
         // --- Entry Point (After DOM is fully loaded) ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Show loading overlay for map until initMap is called by Google Maps API
-            showLoading(mapLoading);
-            // setupDashboard will be called by initMap() once Google Maps is ready
+            // Event listeners for login form
+            loginButton.addEventListener('click', handleLogin);
+            emailInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+
+            // Check for existing session
+            const storedUserId = localStorage.getItem('loggedInUserId');
+            const storedUserEmail = localStorage.getItem('loggedInUserEmail');
+
+            if (storedUserId && storedUserEmail) {
+                currentUser = MOCK_USERS.find(u => u.id === storedUserId && u.email === storedUserEmail);
+                if (currentUser) {
+                    showDashboard();
+                    // Show loading overlay for map until initMap is called by Google Maps API
+                    showLoading(mapLoading);
+                    // setupDashboard will be called by initMap() once Google Maps is ready
+                    // If initMap is already called, call setupDashboard directly
+                    if (typeof google !== 'undefined' && google.maps && map) {
+                        setupDashboard();
+                    }
+                    return; // Stop here, dashboard is being set up
+                }
+            }
+            // If no valid session, show login page
+            showLogin();
         });
     </script>
 </body>
