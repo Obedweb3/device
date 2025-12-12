@@ -481,6 +481,7 @@
     <!-- Your Custom JavaScript Logic -->
     <script>
         // --- Mock Data (Simulates your backend data) ---
+        // In a real application, this data would come from your backend API
         let MOCK_USERS = [
             { id: 'user1', email: 'alice@example.com', name: 'Alice' },
             { id: 'user2', email: 'bob@example.com', name: 'Bob' },
@@ -551,7 +552,7 @@
         function hideLoading(element) { element.style.display = 'none'; }
 
         function formatRelativeTime(date) {
-            if (!(date instanceof Date) || isNaN(date)) return 'Never';
+            if (!(date instanceof Date) || isNaN(date.getTime())) return 'Never'; // Use getTime() for reliable NaN check
             const now = new Date();
             const seconds = Math.round((now - date) / 1000);
             const minutes = Math.round(seconds / 60);
@@ -585,6 +586,7 @@
             clearMap(); // Clear map content when logging out
             activeDeviceId = null;
             deviceListUl.innerHTML = '';
+            noDevicesMessage.classList.add('hidden'); // Hide no devices message
         }
 
         function showDashboard() {
@@ -691,11 +693,14 @@
                 ]
             });
 
-            // Initial dashboard setup (will run on DOMContentLoaded, then call this)
-            // Or more correctly: `setupDashboard()` will be called after login/page load check.
+            // If a user was already logged in when the map loaded, finish setup
+            if (currentUser && document.body.classList.contains('dashboard-active')) {
+                 setupDashboard();
+            }
         }
 
         // --- API Simulation Functions ---
+        // In a real application, these would be actual `fetch` calls to your backend
 
         async function fetchDevices(userId) {
             showLoading(sidebarLoading);
@@ -716,7 +721,10 @@
             return new Promise(resolve => {
                 setTimeout(() => {
                     hideLoading(mapLoading);
-                    const locations = MOCK_LOCATION_SAMPLES[deviceId] || [];
+                    const locations = (MOCK_LOCATION_SAMPLES[deviceId] || []).map(loc => ({
+                        ...loc,
+                        recordedAt: new Date(loc.recordedAt) // Ensure date objects
+                    }));
                     resolve(locations.sort((a, b) => a.recordedAt - b.recordedAt)); // Sort chronologically
                 }, 1200); // Simulate network delay
             });
@@ -796,7 +804,12 @@
         function plotDeviceLocations(deviceId, locations) {
             clearMap();
 
-            if (!map || !locations || locations.length === 0) {
+            if (!map) {
+                console.error("Map not initialized.");
+                return;
+            }
+
+            if (!locations || locations.length === 0) {
                 console.warn(`No map or locations to plot for device ${deviceId}.`);
                 map.setCenter({ lat: 0, lng: 0 }); // Center map to a global view if no locations
                 map.setZoom(2);
@@ -827,10 +840,12 @@
 
             // Draw polyline for historical path
             if (path.length > 1) {
+                // Get the computed value of the CSS variable for strokeColor
+                const accentColorBlue = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-blue');
                 polylines[deviceId] = new google.maps.Polyline({
                     path: path,
                     geodesic: true,
-                    strokeColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color-blue'), /* Use CSS variable for consistency */
+                    strokeColor: accentColorBlue,
                     strokeOpacity: 0.8,
                     strokeWeight: 4,
                     map: map,
@@ -877,8 +892,17 @@
                 localStorage.setItem('loggedInUserId', user.id); // Simulate session
                 localStorage.setItem('loggedInUserEmail', user.email); // Store email for display
                 loginError.textContent = ''; // Clear any previous error
+                
                 showDashboard();
-                setupDashboard(); // Load devices for the logged-in user
+                // Ensure map is loaded before calling setupDashboard
+                if (typeof google !== 'undefined' && google.maps && map) {
+                    setupDashboard();
+                } else {
+                    // Set a flag, setupDashboard will be called by initMap callback
+                    document.body.classList.add('dashboard-active');
+                    showLoading(mapLoading); // Keep map loading visible until initMap runs
+                }
+
             } else {
                 loginError.textContent = 'Email not recognized. Please try alice@example.com or bob@example.com';
             }
@@ -930,6 +954,7 @@
             localStorage.removeItem('loggedInUserId');
             localStorage.removeItem('loggedInUserEmail');
             currentUser = null;
+            document.body.classList.remove('dashboard-active'); // Remove flag
             showLogin();
             clearMap();
             deviceListUl.innerHTML = ''; // Clear device list
@@ -982,10 +1007,11 @@
                 currentUser = MOCK_USERS.find(u => u.id === storedUserId && u.email === storedUserEmail);
                 if (currentUser) {
                     showDashboard();
+                    // Set a flag that dashboard should be active for initMap callback
+                    document.body.classList.add('dashboard-active');
                     // Show loading overlay for map until initMap is called by Google Maps API
                     showLoading(mapLoading);
-                    // setupDashboard will be called by initMap() once Google Maps is ready
-                    // If initMap is already called, call setupDashboard directly
+                    // If initMap has already run (e.g., from browser cache), call setupDashboard directly
                     if (typeof google !== 'undefined' && google.maps && map) {
                         setupDashboard();
                     }
